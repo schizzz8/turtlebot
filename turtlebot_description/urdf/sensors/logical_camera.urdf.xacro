@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot name="sensor_logical_camera" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find turtlebot_description)/urdf/logical_turtlebot_gazebo.urdf.xacro"/>
+  <xacro:include filename="$(find turtlebot_description)/urdf/turtlebot_properties.urdf.xacro"/>
+  
+  <xacro:property name="kinect_cam_py" value="-0.0125"/>
+  <!-- Parameterised in part by the values in turtlebot_properties.urdf.xacro -->
+  <xacro:macro name="sensor_logical_camera" params="parent">
+    <joint name="base_logical_camera_joint" type="fixed">
+      <origin xyz="${cam_px} ${kinect_cam_py} 0.58" rpy="${cam_or} ${cam_op} ${cam_oy}"/>
+      <parent link="${parent}"/>
+      <child link="logical_camera_frame" />
+    </joint>
+    <link name="logical_camera_frame"/>
+
+    <joint name="logical_camera_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="logical_camera_frame" />
+      <child link="logical_camera_optical_frame" />
+    </joint>
+    <link name="logical_camera_optical_frame"/>
+
+    <joint name="logical_camera_joint" type="fixed">
+      <origin xyz="-0.031 ${-kinect_cam_py} -0.016" rpy="0 0 0"/>
+      <parent link="logical_camera_frame"/>
+      <child link="logical_camera_link"/>
+    </joint>  
+      <link name="logical_camera_link">
+      <visual>
+       <origin xyz="0 0 0" rpy="0 0 ${M_PI/2}"/>
+        <geometry>
+         <mesh filename="package://turtlebot_description/meshes/sensors/kinect.dae"/>
+        </geometry>
+      </visual>
+  	  <collision>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  	    <geometry>
+  	      <box size="0.07271 0.27794 0.073"/>
+  	    </geometry>
+  	  </collision>
+      <inertial>
+        <mass value="0.564" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.003881243" ixy="0.0" ixz="0.0"
+                 iyy="0.000498940" iyz="0.0"
+                 izz="0.003879257" />
+      </inertial>
+    </link>
+	<!-- Logical camera sensor for simulation -->
+	<turtlebot_sim_logical_camera_sensor/>
+  </xacro:macro>
+</robot>
